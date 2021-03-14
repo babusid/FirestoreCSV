@@ -1,0 +1,32 @@
+{
+  "name": "firestorecsv",
+  "version": "1.0.0",
+  "description": "Tool to import/export large amounts of data from a Google Firestore database using CSV files, and a Firestore admin account",
+  "main": "index.js",
+  "scripts": {
+    "start":"node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/babusid/FirestoreCSV.git"
+  },
+  "keywords": [
+    "Google",
+    "Firestore",
+    "Admin",
+    "CSV",
+    "files",
+    "Import",
+    "Export",
+    "manage",
+    "batch",
+    "download",
+    "upload"
+  ],
+  "author": "Sidharth N. Babu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/babusid/FirestoreCSV/issues"
+  },
+  "homepage": "https://github.com/babusid/FirestoreCSV#readme"
+}
