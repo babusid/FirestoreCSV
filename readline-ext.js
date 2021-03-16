@@ -7,4 +7,3 @@ readline.Interface.prototype.question[promisify.custom] = function(prompt){
     });
 }
 readline.Interface.prototype.questionAsync = promisify(readline.Interface.prototype.question);
-

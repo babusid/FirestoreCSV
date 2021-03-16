@@ -15,7 +15,8 @@ const main = async()=>{
         process.stdin,
         process.stdout
     );
-    //find csv filepath, datamode, filemode to use
+
+    //get all necessary data from user
     const dataCSV = await input.questionAsync("What is the Filepath of the CSV file?: ");
     let dataMode = await input.questionAsync("What is the data mode (Upload/Download)?: ");
     while(1){
@@ -35,39 +36,37 @@ const main = async()=>{
             break;
         }
     }
+    let collection;
     if (fileMode=="1"){
-        collection=await input.questionAsync("What is the collection name?")
+        collection=await input.questionAsync("What is the collection name?");
     }else{
-        console.log("Since you have selected multi-collection, this program will be slower.")
+        console.log("Since you have selected multi-collection, this program will be slower.");
     }
     
-    //setup database credentials
-    // const serviceAccount = databaseData.serviceAccount;
-    // const databaseURL = databaseData.databaseURL;
-    // try{
-    //     admin.initializeApp({
-    //         credential: serviceAccount,
-    //         databaseURL: databaseURL,
-    //     });
-    // } catch (error){
-    //     console.log("Did you fill out info.json?");
-    //     console.log("ERROR FROM FIRESTORE SDK:");
-    //     console.log(error);
-    //     process.exit(1);
-    // }
-    // const db = admin.firestore;
+    //setup database credentials and initialize
+    try{
+        admin.initializeApp({
+            credential: admin.credential.cert(databaseData.serviceAccount)
+        });
+    } catch (error){
+        console.log("Did you fill out info.json?");
+        console.log("ERROR FROM FIRESTORE SDK:");
+        console.log(error);
+        process.exit(1);
+    }
+    const db = admin.firestore();
 
     let filestream;
     if (dataMode=="Upload"){
         filestream = fs.createReadStream(dataCSV, { flags: "r" }).on('error',()=>{
-            console.log("You seem to have input a non-existent filepath.\n Please verify filepath is correct and run this program again.\n This process will exit in 10 seconds")
+            console.log("You seem to have input a non-existent filepath.\n Please verify filepath is correct and run this program again.\n This process will exit in 10 seconds");
             setTimeout(() => {
                 process.exit(0);
             }, 10000);
         });
-        csvToFirestore(filestream,db);
+        csvToFirestore(filestream,fileMode,collection,db);
     } else {
-        console.log("Download Mode is not yet built.")
+        console.log("Download Mode is not yet built.");
         process.exit(0);
         firestoreToCSV(filestream,db);
     }
@@ -77,14 +76,16 @@ const main = async()=>{
 /**
  * @brief Function to upload CSV file to the firestore database
  * @param {fs.ReadStream} filestream  Filesystem readstream to use in order to parse CSV and upload to firestore database
- * @param {admin.firestore} db Firestore Database
+ * @param {String} filemode String 1/2 which chooses between single-collection CSV and multi-collection CSV where each row has the collection name 
+ * @param {String} collection String which holds the collection name if single-collection, else is undefined
+ * @param {firestore.Firestore} db Firestore Database
  */
-const csvToFirestore = async(filestream,db)=>{
-    let docArr = [];
+const csvToFirestore = async(filestream,fileMode,collection,db)=>{
+    let docArr = []; //holds all the rows of the CSV as individual document objects
     //make sure that filestream is open
     await new Promise(
         (resolve)=>{
-            filestream.on('open', resolve)
+            filestream.on('open', resolve);
         }
     );
     //create filestream pipe to csvParser
@@ -94,23 +95,37 @@ const csvToFirestore = async(filestream,db)=>{
     ('data',
         (row)=>{
             docArr.push(row);
+            //console.log(docArr);
         }
     );
     //now that docArray is filled, go through, establish a reference to the collection of each entry, and upload the doc to that collection
-    if (fileMode=="1"){
-        //single collection sheet
-        csvParse.on('end',async()=>{
-            await db.CollectionReference()
-            console.log(docArr);
+    csvParse.on('end',
+    async()=>{
+        console.log("Finished Parsing CSV");
+        if (fileMode=="1"){ //single-collection sheet
+            let promiseArr = []
+            docArr.map(
+                async(elem)=>{
+                    //TODO: add overwrite protection
+                    const elemProm = db.collection(collection).doc(`${elem.id}`).set(elem, {merge: true});
+                    promiseArr.push(elemProm);
+                    
+                })
+            //wait for promiseArr to resolve everything here and then exit
+            Promise.all(promiseArr).then(
+                ()=>{
+                    process.exit(0)
+                }  
+            );
+
+        } else if (fileMode=="2"){
+            //multicollection sheet
+            console.log("MultiCollection sheets are not yet supported");
             process.exit(0);
-        });
-    } else if (fileMode=="2"){
-        //multicollection sheet
+        }
     }
-    
+    )
 }
-
-
 
 //Runtime
 main();
