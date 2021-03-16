@@ -7,9 +7,8 @@ const csvParser = require('csv-parser');
 const databaseData = require('./info.json');
 
 
-
 const main = async()=>{
-   console.log("For ease of use, I recommend having the following two files in the same directory as this program: \ninfo.json, and the CSV file you are using");
+   console.log("For ease of use, I recommend having the CSV file you are using in the same directory as this package.");
     //create input interface
    const input = readline.createInterface(
         process.stdin,
