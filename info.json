@@ -1,4 +1,0 @@
-{
-    "serviceAccount":"copy serviceAccount.json exported from firestore console",
-    "databaseURL": "copy database URL into here"
-}
