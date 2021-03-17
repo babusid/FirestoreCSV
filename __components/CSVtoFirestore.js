@@ -6,10 +6,11 @@ const csvParser = require('csv-parser');
 
 /**
  * @brief Function to upload CSV file to the firestore database where the CSV file holds data intended for a single-collection
+ * @param {String} dataCSV Path to the CSV file
  * @param {String} collection String which holds the collection name
  * @param {firestore.Firestore} db Firestore Database
  */
-const uploadSingleCollection = async(collection,db)=>{
+const uploadSingleCollection = async(dataCSV, collection,db)=>{
     const filestream = fs.createReadStream(dataCSV, { flags: "r" }).on('error',()=>{
         console.log("You seem to have input a non-existent filepath for the data CSV.\n Please verify filepath is correct and run this program again.\n This process will exit in 10 seconds");
         setTimeout(() => {
@@ -57,8 +58,11 @@ const uploadSingleCollection = async(collection,db)=>{
 
 /**
  * @brief Function to upload a CSV file holding rows where the elements belong to multiple collections.
+ * @param {String} dataCSV Path of CSV file
  * @param {firestore.Firestore} db Database to push the data to
  */
-const uploadMultipleCollection = (db) =>{
+const uploadMultipleCollection = (dataCSV,db) =>{
     console.log("Uploading multiple collection csv's hasn't been built yet")
 }
+
+module.exports = {uploadSingleCollection,uploadMultipleCollection}

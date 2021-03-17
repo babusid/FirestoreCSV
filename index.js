@@ -4,7 +4,7 @@ const readline = require("readline");
 require("./readline-ext"); //async extension for readline
 const fs = require('fs');
 const databaseData = require('./info.json');
-const csvToFirestore = require('./__components/CSVtoFirestore.js');
+const CSVtoFirestore = require("./__components/CSVtoFirestore");
 
 const main = async()=>{
    console.log("For ease of use, I recommend having the CSV file you are using in the same directory as this package.");
@@ -15,6 +15,7 @@ const main = async()=>{
     );
 
     //get all necessary data from user
+    const databaseData = require(await input.questionAsync("What is the Filepath of the info.json? (file that contains service account information)"))
     const dataCSV = await input.questionAsync("What is the Filepath of the CSV file?: ");
     let dataMode = await input.questionAsync("What is the data mode (Upload/Download)?: ");
     while(1){
@@ -57,8 +58,8 @@ const main = async()=>{
     }
     const db = admin.firestore();
     if (dataMode=="Upload"){
-        if (fileMode=="1"){csvToFirestore.uploadSingleCollection(collection,db);}
-        else if (fileMode=="2"){csvToFirestore.uploadMultipleCollection(db);}
+        if (fileMode=="1"){CSVtoFirestore.uploadSingleCollection(dataCSV,collection,db);}
+        else if (fileMode=="2"){CSVtoFirestore.uploadMultipleCollection(dataCSV,db);}
     } else {
         console.log("Download Mode is not yet built.");
         process.exit(1);
