@@ -6,7 +6,7 @@ const csvParser = require('csv-parser');
 
 /**
  * @brief Function to upload CSV file to the firestore database where the CSV file holds data intended for a single-collection
- * @param {String} collection String which holds the collection name if single-collection, else is undefined
+ * @param {String} collection String which holds the collection name
  * @param {firestore.Firestore} db Firestore Database
  */
 const uploadSingleCollection = async(collection,db)=>{
@@ -53,4 +53,12 @@ const uploadSingleCollection = async(collection,db)=>{
         );
     }
     )
+}
+
+/**
+ * @brief Function to upload a CSV file holding rows where the elements belong to multiple collections.
+ * @param {firestore.Firestore} db Database to push the data to
+ */
+const uploadMultipleCollection = (db) =>{
+    console.log("Uploading multiple collection csv's hasn't been built yet")
 }
