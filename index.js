@@ -58,7 +58,7 @@ const main = async()=>{
     const db = admin.firestore();
     if (dataMode=="Upload"){
         if (fileMode=="1"){csvToFirestore.uploadSingleCollection(collection,db);}
-        
+        else if (fileMode=="2"){csvToFirestore.uploadMultipleCollection(db);}
     } else {
         console.log("Download Mode is not yet built.");
         process.exit(1);
