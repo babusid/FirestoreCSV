@@ -38,7 +38,7 @@ const main = async()=>{
     let collection;
     if (fileMode=="1"){
         collection=await input.questionAsync("What is the collection name?");
-    }else{
+    }else if (fileMode=="2"){
         console.log("Multi-collection support has not yet been built. This program will stop in ten seconds.");
         setTimeout(() => {
             process.exit(1)
